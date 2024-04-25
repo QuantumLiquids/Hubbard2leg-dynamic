@@ -1,0 +1,26 @@
+{
+  "CaseParams": {
+    "Lx": 10,
+    "Numhole": 2,
+    "t": 1,
+    "t_perp": 0.84,
+    "t2": -0.3,
+    "U": 8,
+    "V": -1.25,
+    "V2": 0.0,
+    "J": 0.0,
+    "Sweeps": 3,
+    "tau" : 0.01,
+    "steps" : 5,
+    "Dmin": 20,
+    "Dmax": 500,
+    "CutOff": 1e-7,
+    "LanczErr": 1e-8,
+    "MaxLanczIter": 50,
+    "Threads": 2,
+    "Perturbation": 0.0,
+    "wavelength" : 4,
+    "noise" : [0.0,0.0],
+    "CorrelationMode" : 1
+  }
+}

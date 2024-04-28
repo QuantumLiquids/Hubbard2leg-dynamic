@@ -52,7 +52,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_definitions(-Wall -g)
 
 
-if (APPLE)
+if (APPLE AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
     if (CMAKE_CXX_COMPILER_ID MATCHES "Intel")
         set(MATH_LIB_COMPILE_FLAGS "-I$ENV{MKLROOT}/include")
         #Need test
@@ -68,10 +68,19 @@ if (APPLE)
         # Note as of Intel oneAPI 2021.2, "source /opt/intel/oneapi/compiler/latest/env/vars.sh"
         set(MATH_LIB_LINK_FLAGS $ENV{MKLROOT}/lib/libmkl_intel_lp64.a $ENV{MKLROOT}/lib/libmkl_intel_thread.a $ENV{MKLROOT}/lib/libmkl_core.a -L$ENV{MKLROOT}/lib -L$ENV{CMPLR_ROOT}/mac/compiler/lib/ -Wl, -rpath $ENV{CMPLR_ROOT}/mac/compiler/lib/libiomp5.dylib -liomp5 -lpthread -lm -ldl)
     endif ()
+elseif (APPLE)
+    #ARM
+    add_definitions(-DUSE_OPENBLAS)
+    set(BLA_VENDOR OpenBLAS)
+    #        FIND_PACKAGE(BLAS REQUIRED)
+    #        FIND_PACKAGE(LAPACK REQUIRED)
+    set(OpenBLAS_ROOT "/opt/homebrew/opt/openblas/")
+    set(Lapack_ROOT "/opt/homebrew/opt/lapack")
+    set(OpenBLAS_INCLUDE_DIRS "${OpenBLAS_ROOT}/include")
+    set(OpenBLAS_LIBRARIES "${OpenBLAS_ROOT}/lib/libblas.dylib")
+    set(MATH_LIB_COMPILE_FLAGS -I${OpenBLAS_INCLUDE_DIRS} -pthread)
+    set(MATH_LIB_LINK_FLAGS ${OpenBLAS_LIBRARIES} ${OpenBLAS_ROOT}/lib/liblapack.dylib -lm -lpthread -ldl -fopenmp -lclapack)
 elseif (UNIX)
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "~/.local/")
-    message("CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}")
-
     #UNIX include APPLE, but we except it here
     if (CMAKE_CXX_COMPILER_ID MATCHES "Intel")
         set(MATH_LIB_COMPILE_FLAGS "-I$ENV{MKLROOT}/include")
@@ -80,7 +89,7 @@ elseif (UNIX)
     if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
         set(MATH_LIB_COMPILE_FLAGS -m64 -I$ENV{MKLROOT}/include)
         # Link the Intel's OpenMP library to avoid performance issue when the library calls the MKL's gesdd function.
-        set(MATH_LIB_LINK_FLAGS -Wl,--start-group $ENV{MKLROOT}/lib/intel64/libmkl_intel_lp64.a $ENV{MKLROOT}/lib/intel64/libmkl_intel_thread.a $ENV{MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -L$ENV{MKLROOT}/lib/intel64 -liomp5 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_rt -lmkl_core -lpthread -Wl,--no-as-needed -ldl)
+        set(MATH_LIB_LINK_FLAGS -Wl,--start-group $ENV{MKLROOT}/lib/intel64/libmkl_intel_lp64.a $ENV{MKLROOT}/lib/intel64/libmkl_intel_thread.a $ENV{MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -L$ENV{MKLROOT}/lib/intel64 -liomp5 -lpthread -lm -ldl)
     endif ()
     if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         set(MATH_LIB_COMPILE_FLAGS -m64 -I$ENV{MKLROOT}/include)

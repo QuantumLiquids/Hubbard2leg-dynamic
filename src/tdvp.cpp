@@ -64,43 +64,43 @@ int main(int argc, char *argv[]) {
   qlmps::TDVPEvolveParams<U1U1QN> sweep_params;
   std::string measure_file_base_name;
 
+  Tensor op1, op2;
   switch (params.CorrelationMode) {
-    case 0:
-      sweep_params = qlmps::TDVPEvolveParams(
-          params.tau, params.steps,
-          N / 2,
-          sz, id, sz, id,
-          e0,
-          params.Dmin, params.Dmax, params.CutOff,
-          qlmps::LanczosParams(params.LanczErr, params.MaxLanczIter)
-      );
+    case 0:op1 = sz;
+      op2 = sz;
       measure_file_base_name = "szsz_dynamic";
       break;
-    case 1:
-      sweep_params = qlmps::TDVPEvolveParams(
-          params.tau, params.steps,
-          N / 2,
-          sp, id, sm, id,
-          e0,
-          params.Dmin, params.Dmax, params.CutOff,
-          qlmps::LanczosParams(params.LanczErr, params.MaxLanczIter)
-      );
+    case 1:op1 = sp;
+      op2 = sm;
       measure_file_base_name = "spsm_dynamic";
       break;
-    case 2:
-      sweep_params = qlmps::TDVPEvolveParams(
-          params.tau, params.steps,
-          N / 2,
-          sm, id, sp, id,
-          e0,
-          params.Dmin, params.Dmax, params.CutOff,
-          qlmps::LanczosParams(params.LanczErr, params.MaxLanczIter)
-      );
+    case 2:op1 = sm;
+      op2 = sp;
       measure_file_base_name = "smsp_dynamic";
+      break;
+    case 3:op1 = id;
+      op2 = sz;
+      measure_file_base_name = "szszc_dynamic"; //continue
+      break;
+    case 4:op1 = id;
+      op2 = sm;
+      measure_file_base_name = "spsmc_dynamic"; //continue
+      break;
+    case 5:op1 = id;
+      op2 = sp;
+      measure_file_base_name = "smspc_dynamic"; //continue
       break;
     default:std::cout << "Not support correlation mode. exit(1)" << std::endl;
       exit(1);
   }
+  sweep_params = qlmps::TDVPEvolveParams(
+      params.tau, params.steps,
+      N / 2,
+      op1, id, op2, id,
+      e0,
+      params.Dmin, params.Dmax, params.CutOff,
+      qlmps::LanczosParams(params.LanczErr, params.MaxLanczIter)
+  );
 
   const SiteVec<TenElemT, U1U1QN> sites = SiteVec<TenElemT, U1U1QN>(N, pb_outF);
   qlmps::MPOGenerator<TenElemT, U1U1QN> mpo_gen(sites, qn0);

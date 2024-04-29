@@ -28,21 +28,22 @@ int main(int argc, char *argv[]) {
 
   double t = params.t, U = params.U, V = params.V;
   using std::cout;
-  cout << " ****** 1D Hubbard Model Parameter List ****** " << "\n";
-  cout << "Lx = " << Lx << "\n";
-  cout << "t = " << t << "\n";
-  cout << "U  = " << U << "\n";
-  cout << "V  = " << V << "\n";
-  cout << "J  = " << params.J << "\n";
-  cout << "total time = " << params.tau * params.steps << std::endl;
+  if (world.rank() == kMasterRank) {
+    cout << " ****** 1D Hubbard Model Parameter List ****** " << "\n";
+    cout << "Lx = " << Lx << "\n";
+    cout << "t = " << t << "\n";
+    cout << "U  = " << U << "\n";
+    cout << "V  = " << V << "\n";
+    cout << "J  = " << params.J << "\n";
+    cout << "total time = " << params.tau * params.steps << std::endl;
 
-  cout << " ****** TDVP Parameter List ******" << "\n";
-  cout << "tau = " << params.tau << "\n";
-  cout << "steps = " << params.steps << "\n";
-  cout << "Dmax = " << params.Dmax << "\n";
-  cout << "CutOff = " << params.CutOff << "\n";
-  cout << "LanczErr = " << params.LanczErr << std::endl;
-
+    cout << " ****** TDVP Parameter List ******" << "\n";
+    cout << "tau = " << params.tau << "\n";
+    cout << "steps = " << params.steps << "\n";
+    cout << "Dmax = " << params.Dmax << "\n";
+    cout << "CutOff = " << params.CutOff << "\n";
+    cout << "LanczErr = " << params.LanczErr << std::endl;
+  }
   clock_t startTime, endTime;
   startTime = clock();
 
@@ -140,43 +141,14 @@ int main(int argc, char *argv[]) {
   } else {
     qlmps::MPITDVPSweepParams<U1U1QN> sweep_params;
 
-    switch (params.CorrelationMode) {
-      case 0:
-        sweep_params = qlmps::MPITDVPSweepParams(
-            params.tau, params.steps,
-            N / 2,
-            sz, id, sz, id,
-            e0,
-            params.Dmin, params.Dmax, params.CutOff,
-            qlmps::LanczosParams(params.LanczErr, params.MaxLanczIter)
-        );
-        measure_file_base_name = "szsz_dynamic";
-        break;
-      case 1:
-        sweep_params = qlmps::MPITDVPSweepParams(
-            params.tau, params.steps,
-            N / 2,
-            sp, id, sm, id,
-            e0,
-            params.Dmin, params.Dmax, params.CutOff,
-            qlmps::LanczosParams(params.LanczErr, params.MaxLanczIter)
-        );
-        measure_file_base_name = "spsm_dynamic";
-        break;
-      case 2:
-        sweep_params = qlmps::MPITDVPSweepParams(
-            params.tau, params.steps,
-            N / 2,
-            sm, id, sp, id,
-            e0,
-            params.Dmin, params.Dmax, params.CutOff,
-            qlmps::LanczosParams(params.LanczErr, params.MaxLanczIter)
-        );
-        measure_file_base_name = "smsp_dynamic";
-        break;
-      default:std::cout << "Not support correlation mode. exit(1)" << std::endl;
-        exit(1);
-    }
+    sweep_params = qlmps::MPITDVPSweepParams(
+        params.tau, params.steps,
+        N / 2,
+        op1, id, op2, id,
+        e0,
+        params.Dmin, params.Dmax, params.CutOff,
+        qlmps::LanczosParams(params.LanczErr, params.MaxLanczIter)
+    );
 
     TwoSiteFiniteTDVP(mps, mpo, sweep_params, measure_file_base_name, world);
   }

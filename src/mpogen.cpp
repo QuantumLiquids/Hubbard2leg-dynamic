@@ -102,6 +102,23 @@ int main(int argc, char *argv[]) {
     mpo_gen.AddTerm(V, nf, site1, nf, site2);
     cout << "add site (" << site1 << "," << site2 << ")  hopping and density interaction terms" << endl;
   }
+  const size_t tdvp_reference_point = N / 2;
+  // assume N%4 == 0
+  // params.Impurity > 0, means trapping hole on the site.
+  switch (params.ImpurityMode) {
+    case 0: {
+      break;
+    }
+    case 1 : {
+      mpo_gen.AddTerm(params.Impurity, nf, N / 2 + 1);
+    }
+    case 2: {
+      mpo_gen.AddTerm(params.Impurity, nf, N / 2 - 2);
+    }
+    case 3: {
+      mpo_gen.AddTerm(params.Impurity, nf, N / 2 - 1);
+    }
+  }
 //
 //  double Perturbation = params.Perturbation;
 //  if (fabs(Perturbation) > kDoubleEpsilon) {

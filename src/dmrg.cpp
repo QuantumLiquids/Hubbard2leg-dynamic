@@ -45,8 +45,9 @@ int main(int argc, char *argv[]) {
   cout << "t = " << t << "\n";
   cout << "U  = " << U << "\n";
   cout << "V  = " << V << "\n";
-  cout << "J  = " << params.J << "\n";
-
+  if (params.ImpurityMode) {
+    cout << "Impurity  = " << params.Impurity << "\n";
+  }
   cout << " ****** DMRG Parameter List ******" << "\n";
   cout << "Sweeps = " << params.Sweeps << "\n";
   cout << "Dmax = " << params.Dmax << "\n";

@@ -27,7 +27,7 @@ bool ParserBondDimension(int argc, char *argv[],
 
 int main(int argc, char *argv[]) {
   namespace mpi = boost::mpi;
-  mpi::environment env(mpi::threading::multiple);
+  mpi::environment env;
   mpi::communicator world;
   std::vector<size_t> output_D_set;
   bool has_bond_dimension_parameter = ParserBondDimension(

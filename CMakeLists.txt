@@ -137,5 +137,5 @@ link_libraries(
 add_executable(mpogen src/mpogen.cpp src/operators.cpp)
 add_executable(dmrg src/dmrg.cpp src/myutil.cpp src/operators.cpp)
 add_executable(tdvp src/tdvp.cpp src/myutil.cpp src/operators.cpp)
-#add_executable(measure1 src/measure1.cpp src/operators_fermion_with_spin_u1.cpp)
+add_executable(static_measure1 src/static_measure1.cpp src/operators.cpp)
 #add_executable(measure2 src/measure2.cpp src/myutil.cpp src/operators.cpp)

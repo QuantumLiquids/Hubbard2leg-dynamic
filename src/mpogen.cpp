@@ -111,12 +111,15 @@ int main(int argc, char *argv[]) {
     }
     case 1 : {
       mpo_gen.AddTerm(params.Impurity, nf, N / 2 + 1);
+      break;
     }
     case 2: {
       mpo_gen.AddTerm(params.Impurity, nf, N / 2 - 2);
+      break;
     }
     case 3: {
       mpo_gen.AddTerm(params.Impurity, nf, N / 2 - 1);
+      break;
     }
   }
 //
